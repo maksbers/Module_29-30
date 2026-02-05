@@ -5,10 +5,10 @@ public class SliderView : MonoBehaviour
 {
     [SerializeField] private Slider _slider;
 
-    private ReactiveVariable<float> _current;
-    private ReactiveVariable<float> _max;
+    private IReadOnlyVariable<float> _current;
+    private IReadOnlyVariable<float> _max;
 
-    public void Initialize(ReactiveVariable<float> current, ReactiveVariable<float> max)
+    public void Initialize(IReadOnlyVariable<float> current, IReadOnlyVariable<float> max)
     {
         _current = current;
         _max = max;

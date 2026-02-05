@@ -11,8 +11,8 @@ public class Health
         _max = new ReactiveVariable<float>(max);
     }
 
-    public ReactiveVariable<float> Max => _max;
-    public ReactiveVariable<float> Current => _current;
+    public IReadOnlyVariable<float> Max => _max;
+    public IReadOnlyVariable<float> Current => _current;
 
     public void Reduce(float value)
     {
