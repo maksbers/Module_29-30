@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Ork : Enemy, IInitializable<OrkConfig>
+public class Ork : Enemy
 {
     [SerializeField] private OrkConfig _config;
 

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Dragon : Enemy, IInitializable<DragonConfig>
+public class Dragon : Enemy
 {
     [SerializeField] private DragonConfig _config;
 

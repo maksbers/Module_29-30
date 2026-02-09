@@ -1,11 +1,9 @@
 public class Item : IReadOnlyItem
 {
-    public string Name { get; set; }
-    public int Count { get; set; }
-
-    public Item(string name, int count)
+    public Item(string name)
     {
         Name = name;
-        Count = count;
     }
+
+    public string Name { get; }
 }

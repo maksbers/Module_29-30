@@ -4,65 +4,55 @@ using System.Linq;
 
 public class Inventory
 {
-    private List<Item> _items = new();
+    private List<InventorySlot> _slots = new();
 
-    public int MaxSize { get; private set; }
-    public int CurrentSize => _items.Sum(item => item.Count);
-
-    public IReadOnlyList<IReadOnlyItem> Items => _items;
-
-    public Inventory(List<Item> items, int maxSize)
+    public Inventory(int maxSize)
     {
-        _items = items;
-
-        if (maxSize < CurrentSize)
-            throw new ArgumentOutOfRangeException(nameof(maxSize));
-
         MaxSize = maxSize;
     }
 
-    public bool CanAdd(Item item)
+    public int MaxSize { get; private set; }
+
+    public int CurrentSize => _slots.Sum(slot => slot.Amount);
+
+    public IReadOnlyList<InventorySlot> Slots => _slots;
+
+    public bool CanAdd(int amount) => CurrentSize + amount <= MaxSize;
+
+    public void Add(Item item, int amount)
     {
-        return CurrentSize + item.Count <= MaxSize;
+        if (CanAdd(amount) == false)
+            throw new InvalidOperationException($"Inventory is full. Cannot add {amount} of {item.Name}");
+
+        InventorySlot existingSlot = _slots.FirstOrDefault(slot => slot.Item.Name == item.Name);
+
+        if (existingSlot != null)
+            existingSlot.Amount += amount;
+        else
+            _slots.Add(new InventorySlot(item, amount));
     }
 
-    public void Add(Item item)
+    public bool TryRemove(string name, int count)
     {
-        if (CanAdd(item) == false)
-            return;
+        InventorySlot slot = _slots.FirstOrDefault(slot => slot.Item.Name == name);
 
-        Item existingItem = _items.FirstOrDefault(i => i.Name == item.Name);
+        if (slot == null)
+            return false;
 
-        if (existingItem != null)
-            existingItem.Count += item.Count;
-        else
-            _items.Add(item);
+        if (slot.Amount < count)
+            return false;
+
+        slot.Amount -= count;
+
+        if (slot.Amount == 0)
+            _slots.Remove(slot);
+
+        return true;
     }
 
-    public List<Item> GetItemsBy(string name, int count)
+    public bool HasItem(string name, int count)
     {
-        List<Item> result = new();
-
-        Item item = _items.FirstOrDefault(i => i.Name == name);
-
-        if (item == null)
-            return result;
-
-        if (item.Count < count)
-            return result;
-
-        if (item.Count == count)
-        {
-            result.Add(item);
-            _items.Remove(item);
-        }
-        else
-        {
-            Item splitItem = new Item(item.Name, count);
-            result.Add(splitItem);
-            item.Count -= count;
-        }
-
-        return result;
+        InventorySlot slot = _slots.FirstOrDefault(slot => slot.Item.Name == name);
+        return slot != null && slot.Amount >= count;
     }
 }

@@ -19,9 +19,7 @@ public class EnemyExamples : MonoBehaviour
     private void SpawnMultiple(System.Action spawnAction)
     {
         for (int i = 0; i < _spawnCount; i++)
-        {
             spawnAction.Invoke();
-        }
     }
 
     private T GetRandomConfig<T>(T[] configs)

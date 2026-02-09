@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class ElfConfig
+public class ElfConfig : EnemyConfig
 {
     [field: SerializeField] public int Damage { get; private set; } = 5;
     [field: SerializeField] public int Agility { get; private set; } = 60;

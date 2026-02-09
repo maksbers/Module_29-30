@@ -1,45 +1,58 @@
-using System.Collections.Generic;
-using System.Linq;
+using System;
 using UnityEngine;
 
 public class InventoryExample : MonoBehaviour
 {
     private void Start()
     {
-        Item sword = new Item("Sword", 1);
-        Item potionStack = new Item("Potion", 5);
+        Item sword = new Item("Sword");
+        Item potion = new Item("Potion");
 
-        List<Item> starterItems = new List<Item> { sword, potionStack };
-        Inventory inventory = new Inventory(starterItems, 10);
+        Inventory inventory = new Inventory(10);
 
-        Debug.Log($"Inventory created. Size: {inventory.CurrentSize}/{inventory.MaxSize}");
+        Debug.Log($"Inventory created. Max Size: {inventory.MaxSize}");
+
+        try
+        {
+            inventory.Add(sword, 1);
+            inventory.Add(potion, 5);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError(exception.Message);
+        }
+
         Debug.Log("--- Inventory before adding ---");
         PrintInventory(inventory);
 
-        Item newPotions = new Item("Potion", 3);
+        Item newPotion = new Item("Potion");
 
-        if (inventory.CanAdd(newPotions))
+        if (inventory.CanAdd(3))
         {
-            inventory.Add(newPotions);
+            inventory.Add(newPotion, 3);
             Debug.Log($"Added 3 Potions.");
         }
 
         Debug.Log("--- Inventory after adding ---");
         PrintInventory(inventory);
 
-        Item tooManyItems = new Item("Stone", 100);
+        Item stone = new Item("Stone");
+        Debug.Log("Trying to add 100 stones...");
 
-        if (inventory.CanAdd(tooManyItems) == false)
-            Debug.Log("Cannot add 100 stones (Not enough space).");
-
-        Debug.Log("Trying to get 6 Potions...");
-        List<Item> takenPotions = inventory.GetItemsBy("Potion", 6);
-
-        if (takenPotions.Count > 0)
+        try
         {
-            int totalTaken = takenPotions.Sum(i => i.Count);
-            Debug.Log($"Successfully took {totalTaken} Potions.");
+            inventory.Add(stone, 100);
         }
+        catch (InvalidOperationException exception)
+        {
+            Debug.Log($"Caught exception: {exception.Message}");
+        }
+
+        Debug.Log("Trying to take 6 Potions...");
+        bool success = inventory.TryRemove("Potion", 6);
+
+        if (success)
+            Debug.Log($"Successfully took 6 Potions.");
         else
             Debug.Log("Failed to take potions.");
 
@@ -49,7 +62,7 @@ public class InventoryExample : MonoBehaviour
 
     private void PrintInventory(Inventory inventory)
     {
-        foreach (var item in inventory.Items)
-            Debug.Log($"Item: {item.Name}, Count: {item.Count}");
+        foreach (var slot in inventory.Slots)
+            Debug.Log($"Item: {slot.Item.Name}, Amount: {slot.Amount}");
     }
 }
